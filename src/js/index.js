@@ -51,36 +51,36 @@ async function onSubmitSearchForm(e) {
   }
 }
 
-// btnLoadMore.addEventListener('click', onClickLoadMoreBtn);
+btnLoadMore.addEventListener('click', onClickLoadMoreBtn);
 
-// async function onClickLoadMoreBtn() {
-//   pageNumber++;
-//   const trimmedValue = input.value.trim();
-//   btnLoadMore.style.display = 'none';
-//   const response = await fetchImages(trimmedValue, pageNumber);
+async function onClickLoadMoreBtn() {
+  pageNumber++;
+  const trimmedValue = input.value.trim();
+  btnLoadMore.style.display = 'none';
+  const response = await fetchImages(trimmedValue, pageNumber);
 
-//   try {
-//     if (response.hits.length === 0) {
-//       Notiflix.Notify.failure(
-//         'Sorry, there are no images matching your search query. Please try again.'
-//       );
-//     } else if (response.hits.length < 40) {
-//       renderImageList(response.hits);
-//       btnLoadMore.style.display = 'none';
-//       gallerySimpleLightbox.refresh();
-//       Notiflix.Notify.info(
-//         "We're sorry, but you've reached the end of search results."
-//       );
-//     } else {
-//       renderImageList(response.hits);
-//       btnLoadMore.style.display = 'block';
-//       gallerySimpleLightbox.refresh();
-//       scrollBy();
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
+  try {
+    if (response.hits.length === 0) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else if (response.hits.length < 40) {
+      renderImageList(response.hits);
+      btnLoadMore.style.display = 'none';
+      gallerySimpleLightbox.refresh();
+      Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+    } else {
+      renderImageList(response.hits);
+      btnLoadMore.style.display = 'block';
+      gallerySimpleLightbox.refresh();
+      scrollBy();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function renderImageList(images) {
   console.log(images, 'images');
@@ -94,13 +94,13 @@ function renderImageList(images) {
     <b>Likes</b> <span class="info-item-api"> ${image.likes} </span>
 </p>
             <p class="info-item">
-                <b>Views</b> <span class="info-item-api">${image.views}</span>  
+                <b>Views</b> <span class="info-item-api">${image.views}</span>
             </p>
             <p class="info-item">
-                <b>Comments</b> <span class="info-item-api">${image.comments}</span>  
+                <b>Comments</b> <span class="info-item-api">${image.comments}</span>
             </p>
             <p class="info-item">
-                <b>Downloads</b> <span class="info-item-api">${image.downloads}</span> 
+                <b>Downloads</b> <span class="info-item-api">${image.downloads}</span>
             </p>
         </div>
     </div>`;
@@ -115,7 +115,6 @@ function cleanGallery() {
   btnLoadMore.style.display = 'none';
 }
 
-// selecting required element
 const element = document.querySelector('.pagination ul');
 let totalPages = 20;
 let page = 10;
@@ -194,4 +193,4 @@ function createPagination(totalPages, page) {
   return liTag; //reurn the li tag
 }
 
-createPagination(totalPages, 5);
+createPagination(totalPages, page);
