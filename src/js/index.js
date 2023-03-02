@@ -20,6 +20,7 @@ async function onSubmitSearchForm(e) {
   const trimmedValue = input.value.trim();
   if (trimmedValue !== '') {
     const response = await fetchImages(trimmedValue, pageNumber);
+    paginationLaunch();
 
     try {
       if (response.hits.length === 0) {
@@ -43,7 +44,6 @@ async function onSubmitSearchForm(e) {
       console.log(error);
     }
   }
-  paginationLaunch();
 }
 
 function renderImageList(images) {
