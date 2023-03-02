@@ -49,38 +49,146 @@ async function onSubmitSearchForm(e) {
       console.log(error);
     }
   }
-}
-
-btnLoadMore.addEventListener('click', onClickLoadMoreBtn);
-
-async function onClickLoadMoreBtn() {
-  pageNumber++;
-  const trimmedValue = input.value.trim();
-  btnLoadMore.style.display = 'none';
-  const response = await fetchImages(trimmedValue, pageNumber);
-
-  try {
-    if (response.hits.length === 0) {
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    } else if (response.hits.length < 40) {
-      renderImageList(response.hits);
-      btnLoadMore.style.display = 'none';
-      gallerySimpleLightbox.refresh();
-      Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
-    } else {
-      renderImageList(response.hits);
-      btnLoadMore.style.display = 'block';
-      gallerySimpleLightbox.refresh();
-      scrollBy();
+  function getPageList(totalPages, page, maxLength) {
+    function range(start, end) {
+      return Array.from(Array(end - start + 1), (_, i) => i + start);
     }
-  } catch (error) {
-    console.log(error);
+    let sideWidth = maxLength < 9 ? 1 : 2;
+    let leftWidth = (maxLength - sideWidth * 2 - 3) >> 1;
+    let rightWidth = (maxLength - sideWidth * 2 - 3) >> 1;
+
+    if (totalPages <= maxLength) {
+      return range(1, totalPages);
+    }
+
+    if (page <= maxLength - sideWidth - 1 - rightWidth) {
+      return range(1, maxLength - sideWidth - 1).concat(
+        0,
+        range(totalPages - sideWidth + 1, totalPages)
+      );
+    }
+
+    if (page >= totalPages - sideWidth - 1 - rightWidth) {
+      return range(1, sideWidth).concat(
+        0,
+        range(totalPages - sideWidth - 1 - rightWidth - leftWidth, totalPages)
+      );
+    }
+    return range(1, sideWidth).concat(
+      0,
+      range(page - leftWidth, page + rightWidth),
+      0,
+      range(totalPages - sideWidth + 1, totalPages)
+    );
   }
+
+  $(function () {
+    let numberOfItem = $('.gallery .photo-card').length;
+    let limitPerPage = 3;
+    let totalPages = Math.ceil(numberOfItem / limitPerPage);
+    let paginationSize = 7;
+    let currentPage;
+    function showPage(whichPage) {
+      if (whichPage < 1 || whichPage > totalPages) return false;
+      currentPage = whichPage;
+
+      $('.gallery .photo-card')
+        .hide()
+        .slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage)
+        .show();
+      $('.pagination li').slice(1, -1).remove();
+
+      getPageList(totalPages, currentPage, paginationSize).forEach(item => {
+        $('<li>')
+          .addClass('page-item')
+          .addClass(item ? 'current-page' : 'dots')
+          .toggleClass('active', item === currentPage)
+          .append(
+            $('<a>')
+              .addClass('page-link')
+              .attr({ href: 'javascript:void(0)' })
+              .text(item || '...')
+          )
+          .insertBefore('.next-page');
+      });
+
+      $('.previuos-page').toggleClass('disable', currentPage === 1);
+      $('.next-page').toggleClass('disable', currentPage === totalPages);
+      return true;
+    }
+
+    $('.pagination').append(
+      $('<li>')
+        .addClass('page-item')
+        .addClass('previuos-page')
+        .append(
+          $('<a>')
+            .addClass('page-link')
+            .attr({ href: 'javascript:void(0)' })
+            .text('Prev')
+        ),
+
+      $('<li>')
+        .addClass('page-item')
+        .addClass('next-page')
+        .append(
+          $('<a>')
+            .addClass('page-link')
+            .attr({ href: 'javascript:void(0)' })
+            .text('Next')
+        )
+    );
+
+    $('.gallery').show();
+    showPage(1);
+
+    $(document).on(
+      'click',
+      '.pagination li.current-page:not(.active)',
+      function () {
+        return showPage(+$(this).text());
+      }
+    );
+
+    $('.next-page').on('click', function () {
+      return showPage(currentPage + 1);
+    });
+    $('.previuos-page').on('click', function () {
+      return showPage(currentPage - 1);
+    });
+  });
 }
+
+// btnLoadMore.addEventListener('click', onClickLoadMoreBtn);
+
+// async function onClickLoadMoreBtn() {
+//   pageNumber++;
+//   const trimmedValue = input.value.trim();
+//   btnLoadMore.style.display = 'none';
+//   const response = await fetchImages(trimmedValue, pageNumber);
+
+//   try {
+//     if (response.hits.length === 0) {
+//       Notiflix.Notify.failure(
+//         'Sorry, there are no images matching your search query. Please try again.'
+//       );
+//     } else if (response.hits.length < 40) {
+//       renderImageList(response.hits);
+//       btnLoadMore.style.display = 'none';
+//       gallerySimpleLightbox.refresh();
+//       Notiflix.Notify.info(
+//         "We're sorry, but you've reached the end of search results."
+//       );
+//     } else {
+//       renderImageList(response.hits);
+//       btnLoadMore.style.display = 'none';
+//       gallerySimpleLightbox.refresh();
+//       scrollBy();
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 function renderImageList(images) {
   console.log(images, 'images');
@@ -114,83 +222,3 @@ function cleanGallery() {
   pageNumber = 1;
   btnLoadMore.style.display = 'none';
 }
-
-const element = document.querySelector('.pagination ul');
-let totalPages = 20;
-let page = 10;
-
-//calling function with passing parameters and adding inside element which is ul tag
-element.innerHTML = createPagination(totalPages, page);
-function createPagination(totalPages, page) {
-  let liTag = '';
-  let active;
-  let beforePage = page - 1;
-  let afterPage = page + 1;
-  if (page > 1) {
-    //show the next button if the page value is greater than 1
-    liTag += `<li class="btn prev" onclick="createPagination(totalPages, ${
-      page - 1
-    })"><span><i class="fas fa-angle-left"></i> Prev</span></li>`;
-  }
-
-  if (page > 2) {
-    //if page value is less than 2 then add 1 after the previous button
-    liTag += `<li class="first numb" onclick="createPagination(totalPages, 1)"><span>1</span></li>`;
-    if (page > 3) {
-      //if page value is greater than 3 then add this (...) after the first li or page
-      liTag += `<li class="dots"><span>...</span></li>`;
-    }
-  }
-
-  // how many pages or li show before the current li
-  if (page == totalPages) {
-    beforePage = beforePage - 2;
-  } else if (page == totalPages - 1) {
-    beforePage = beforePage - 1;
-  }
-  // how many pages or li show after the current li
-  if (page == 1) {
-    afterPage = afterPage + 2;
-  } else if (page == 2) {
-    afterPage = afterPage + 1;
-  }
-
-  for (var plength = beforePage; plength <= afterPage; plength++) {
-    if (plength > totalPages) {
-      //if plength is greater than totalPage length then continue
-      continue;
-    }
-    if (plength == 0) {
-      //if plength is 0 than add +1 in plength value
-      plength = plength + 1;
-    }
-    if (page == plength) {
-      //if page is equal to plength than assign active string in the active variable
-      active = 'active';
-    } else {
-      //else leave empty to the active variable
-      active = '';
-    }
-    liTag += `<li class="numb ${active}" onclick="createPagination(totalPages, ${plength})"><span>${plength}</span></li>`;
-  }
-
-  if (page < totalPages - 1) {
-    //if page value is less than totalPage value by -1 then show the last li or page
-    if (page < totalPages - 2) {
-      //if page value is less than totalPage value by -2 then add this (...) before the last li or page
-      liTag += `<li class="dots"><span>...</span></li>`;
-    }
-    liTag += `<li class="last numb" onclick="createPagination(totalPages, ${totalPages})"><span>${totalPages}</span></li>`;
-  }
-
-  if (page < totalPages) {
-    //show the next button if the page value is less than totalPage(20)
-    liTag += `<li class="btn next" onclick="createPagination(totalPages, ${
-      page + 1
-    })"><span>Next <i class="fas fa-angle-right"></i></span></li>`;
-  }
-  element.innerHTML = liTag; //add li tag inside ul tag
-  return liTag; //reurn the li tag
-}
-
-createPagination(totalPages, page);
