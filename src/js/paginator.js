@@ -34,7 +34,7 @@ function paginationLaunch() {
 
   $(function () {
     let numberOfItem = $('.gallery .photo-card').length;
-    let limitPerPage = 3;
+    let limitPerPage = 2;
     let totalPages = Math.ceil(numberOfItem / limitPerPage);
     let paginationSize = 7;
     let currentPage;
