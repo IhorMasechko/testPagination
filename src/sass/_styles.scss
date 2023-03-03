@@ -212,9 +212,24 @@ body {
 }
 
 .disable {
-  background: #ffffff;
+  background: #f4f4f4;
+  pointer-events: none;
+}
+
+.disable .page-link {
+  color: GrayText;
 }
 
 .page-item.dots {
   background: inherit;
+}
+
+.page__svg--next {
+  width: 24px;
+  height: 24px;
+}
+
+.page__svg--prev {
+  width: 24px;
+  height: 24px;
 }

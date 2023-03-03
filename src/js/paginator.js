@@ -72,6 +72,15 @@ function paginationLaunch() {
         .addClass('page-item')
         .addClass('previuos-page')
         .append(
+          $('<svg>')
+            .addClass('page__svg--prev')
+            .append(
+              $('<use>').attr({
+                href: './images/NextPrev.svg#icon-Prev',
+              })
+            )
+        )
+        .append(
           $('<a>')
             .addClass('page-link')
             .attr({ href: 'javascript:void(0)' })
@@ -86,6 +95,15 @@ function paginationLaunch() {
             .addClass('page-link')
             .attr({ href: 'javascript:void(0)' })
             .text('Next')
+        )
+        .append(
+          $('<svg>')
+            .addClass('page__svg--next')
+            .append(
+              $('<use>').attr({
+                href: './images/NextPrev.svg#icon-Next',
+              })
+            )
         )
     );
 
