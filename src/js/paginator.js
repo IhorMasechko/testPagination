@@ -37,6 +37,10 @@ function paginationLaunch() {
     let limitPerPage = 2;
     let totalPages = Math.ceil(numberOfItem / limitPerPage);
     let paginationSize = 7;
+    if (window.screen.width <= 767) {
+      paginationSize = 5;
+    }
+
     let currentPage;
     function showPage(whichPage) {
       if (whichPage < 1 || whichPage > totalPages) return false;
@@ -84,7 +88,7 @@ function paginationLaunch() {
           $('<a>')
             .addClass('page-link')
             .attr({ href: 'javascript:void(0)' })
-            .text('Prev')
+            .text('<Prev')
         ),
 
       $('<li>')
@@ -94,7 +98,7 @@ function paginationLaunch() {
           $('<a>')
             .addClass('page-link')
             .attr({ href: 'javascript:void(0)' })
-            .text('Next')
+            .text('Next>')
         )
         .append(
           $('<svg>')
@@ -121,8 +125,6 @@ function paginationLaunch() {
     $('.next-page').on('click', function () {
       if (currentPage === totalPages) {
         pageNumber++;
-        renderImageList(response.hits);
-        gallerySimpleLightbox.refresh();
       } else {
         return showPage(currentPage + 1);
       }
