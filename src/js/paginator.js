@@ -34,7 +34,7 @@ function paginationLaunch() {
 
   $(function () {
     let numberOfItem = $('.gallery .photo-card').length;
-    let limitPerPage = 2;
+    let limitPerPage = 10;
     let totalPages = Math.ceil(numberOfItem / limitPerPage);
     let paginationSize = 7;
     if (window.screen.width <= 767) {
@@ -118,7 +118,8 @@ function paginationLaunch() {
       'click',
       '.pagination li.current-page:not(.active)',
       function () {
-        return showPage(+$(this).text());
+        showPage(+$(this).text());
+        $('html, body').animate({ scrollTop: 0 }, 'slow');
       }
     );
 
@@ -126,11 +127,13 @@ function paginationLaunch() {
       if (currentPage === totalPages) {
         pageNumber++;
       } else {
-        return showPage(currentPage + 1);
+        showPage(currentPage + 1);
+        $('html, body').animate({ scrollTop: 0 }, 'slow');
       }
     });
     $('.previuos-page').on('click', function () {
-      return showPage(currentPage - 1);
+      showPage(currentPage - 1);
+      $('html, body').animate({ scrollTop: 0 }, 'slow');
     });
   });
 }
