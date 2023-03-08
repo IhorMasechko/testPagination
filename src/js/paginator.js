@@ -88,7 +88,7 @@ function paginationLaunch() {
           $('<a>')
             .addClass('page-link')
             .attr({ href: 'javascript:void(0)' })
-            .text('<Prev')
+            .text('Prev')
         ),
 
       $('<li>')
@@ -98,7 +98,7 @@ function paginationLaunch() {
           $('<a>')
             .addClass('page-link')
             .attr({ href: 'javascript:void(0)' })
-            .text('Next>')
+            .text('Next')
         )
         .append(
           $('<svg>')
